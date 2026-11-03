@@ -1,26 +1,227 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
+/*
+ * TQE design system – single source of styling truth.
+ * Values come from the Figma file "TQE" (see CLAUDE.md for the file key).
+ *
+ * How to use:
+ *   - Use semantic classes (bg-primary, text-muted-foreground, border-border, bg-success-soft…),
+ *     never raw hex values or palette colors (bg-blue-600) in module code.
+ *   - Change a color here, and every screen follows.
+ */
+
+/* shadcn components ship `dark:` classes; the app is light-only, so they never activate. */
+@custom-variant dark (&:is(.dark *));
+
+/* ---------------------------------------------------------------------------
+ * 1. Design tokens (raw values)
+ * ------------------------------------------------------------------------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Brand */
+  --brand: #14499b; /* primary-brand */
+  --brand-strong: #104fbe; /* brand/800 – hover / emphasis */
+  --brand-light: #51baff; /* brand/400 */
+  --brand-soft: #edf8ff; /* brand/50 */
+  --brand-deep: #001e4c; /* navy for image overlays (login hero) */
+
+  /* Surfaces */
+  --background: #f9fafb; /* app canvas behind cards (gray/50) */
+  --foreground: #0a0a0a;
+  --card: #ffffff;
+  --card-foreground: #0a0a0a;
+  --popover: #ffffff;
+  --popover-foreground: #0a0a0a;
+
+  /* shadcn semantic roles */
+  --primary: var(--brand);
+  --primary-foreground: #ffffff;
+  --secondary: #f3f4f6; /* gray/100 */
+  --secondary-foreground: #1f2937; /* gray/800 */
+  --muted: #f3f4f6;
+  --muted-foreground: #737373;
+  --accent: #f3f4f6;
+  --accent-foreground: #1f2937;
+  --destructive: #ef4444; /* red/500 */
+  --border: #e5e5e5;
+  --input: #e5e5e5;
+  --ring: color-mix(in oklab, var(--brand) 45%, white);
+
+  /* Status tones – shared by badges, score bars, stat values, alerts.
+     Domain values map onto these (e.g. Finding "Critical" → danger). */
+  --success: #16a34a; /* green/600 */
+  --success-soft: #f0fdf4; /* green/50 */
+  --warning: #f97316; /* orange/500 */
+  --warning-soft: #fff7ed; /* orange/50 */
+  --danger: #ef4444; /* red/500 */
+  --danger-soft: #fef2f2; /* red/50 */
+  --info: #2563eb; /* blue/600 */
+  --info-soft: #eff6ff; /* blue/50 */
+  --highlight: #8b5cf6; /* violet/500 – minor findings, OFI */
+  --highlight-soft: #f5f3ff; /* violet/50 */
+  --neutral: #71717a; /* zinc/500 – draft, insufficient evidence */
+  --neutral-soft: #fafafa; /* zinc/50 */
+
+  /* Charts (dashboard: docs reviewed = brand, findings = amber) */
+  --chart-1: var(--brand);
+  --chart-2: #eab308;
+  --chart-3: var(--brand-light);
+  --chart-4: var(--success);
+  --chart-5: var(--warning);
+
+  /* Sidebar (shadcn Sidebar component) */
+  --sidebar: #f3f4f6; /* gray/100 */
+  --sidebar-foreground: #1f2937;
+  --sidebar-primary: var(--brand);
+  --sidebar-primary-foreground: #ffffff;
+  --sidebar-accent: color-mix(in oklab, var(--brand) 8%, white); /* active nav item */
+  --sidebar-accent-foreground: #0a0a0a;
+  --sidebar-border: #e5e5e5;
+  --sidebar-ring: var(--ring);
+
+  /* Shape & layout */
+  --radius: 0.625rem; /* lg 10px → md 8px, sm 6px (matches Figma) */
+  --header-height: 4rem;
 }
 
+/* ---------------------------------------------------------------------------
+ * 2. Tailwind theme – exposes the tokens above as utility classes
+ * ------------------------------------------------------------------------- */
 @theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-heading: var(--font-sans);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-brand: var(--brand);
+  --color-brand-strong: var(--brand-strong);
+  --color-brand-light: var(--brand-light);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-deep: var(--brand-deep);
+
+  --color-success: var(--success);
+  --color-success-soft: var(--success-soft);
+  --color-warning: var(--warning);
+  --color-warning-soft: var(--warning-soft);
+  --color-danger: var(--danger);
+  --color-danger-soft: var(--danger-soft);
+  --color-info: var(--info);
+  --color-info-soft: var(--info-soft);
+  --color-highlight: var(--highlight);
+  --color-highlight-soft: var(--highlight-soft);
+  --color-neutral: var(--neutral);
+  --color-neutral-soft: var(--neutral-soft);
+
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+
+  /* h-header, top-header, pt-header… for sticky offsets */
+  --spacing-header: var(--header-height);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
+/* ---------------------------------------------------------------------------
+ * 3. Text styles – the type scale repeated across the Figma screens.
+ *    One class per role keeps headings consistent without long class lists.
+ * ------------------------------------------------------------------------- */
+@utility text-page-title {
+  /* "Assessments", "New assessment" – 24/32 semibold */
+  font-size: var(--text-2xl);
+  line-height: var(--text-2xl--line-height);
+  font-weight: var(--font-weight-semibold);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+}
+
+@utility text-section-title {
+  /* Card headings: "Assessment Details", "Recent Assessments" – 16/24 semibold */
+  font-size: var(--text-base);
+  line-height: var(--text-base--line-height);
+  font-weight: var(--font-weight-semibold);
+  color: var(--foreground);
+}
+
+@utility text-overline {
+  /* Small caps labels: "MY ASSESSMENTS", "SELECTED STANDARDS" – 12/16 uppercase */
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  font-weight: var(--font-weight-medium);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--muted-foreground);
+}
+
+@utility text-stat {
+  /* Big numbers in stat cards: "12", "81", "60%" – 30/36 semibold, aligned digits */
+  font-size: var(--text-3xl);
+  line-height: var(--text-3xl--line-height);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+}
+
+@utility text-caption {
+  /* Meta lines: "71/93 clauses · 12 findings" – 12/16 muted */
+  font-size: var(--text-xs);
+  line-height: var(--text-xs--line-height);
+  color: var(--muted-foreground);
+}
+
+/* ---------------------------------------------------------------------------
+ * 4. Base styles
+ * ------------------------------------------------------------------------- */
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+
+  html {
+    @apply font-sans;
+  }
+
+  body {
+    @apply bg-background text-sm text-foreground antialiased;
+  }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+
+  ::selection {
+    @apply bg-brand-soft text-foreground;
+  }
 }
